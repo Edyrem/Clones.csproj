@@ -14,7 +14,7 @@ namespace Clones
 		NewStackItem<T> Head { get; set; }
 		NewStackItem<T> Tail { get; set; }
 
-		public int Count { get; set; }
+		public int Count { get; private set; }
 
 		public void Push(T value)
 		{
@@ -44,16 +44,30 @@ namespace Clones
 			return Tail.Value;
 		}
 
-		public T Clone()
+		public void Clear()
         {
+			Head = Tail = new NewStackItem<T>() { Value = default(T), Previous = null };
+			Count = 0;
+		}
 
+		public NewStack<T> Clone()
+        {
+			var newStack = this;
+			var stack = new NewStack<T>();
+			while(newStack.Head != null)
+				stack.Push(newStack.Pop());
+			var head = stack.Head;
+			var tail = stack.Tail;
+			newStack.Head = tail;
+			newStack.Tail = head;
+			return newStack;
         }
 	}
 
 	public class Clone
     {
-		public Stack<int> LearningProgramm = new Stack<int>();
-		public Stack<int> RollbackedProgramm = new Stack<int>();
+		public NewStack<int> LearningProgramm = new NewStack<int>();
+		public NewStack<int> RollbackedProgramm = new NewStack<int>();
 
 		public void Learn(int programm)
 		{
@@ -128,9 +142,14 @@ namespace Clones
 		{
 			var newClone = new Clone()
 			{
-				LearningProgramm = ReturnStack(clone[cloneId].LearningProgramm),
-				RollbackedProgramm = ReturnStack(clone[cloneId].RollbackedProgramm)
+				LearningProgramm = clone[cloneId].LearningProgramm.Clone(),
+				RollbackedProgramm = clone[cloneId].RollbackedProgramm.Clone()
 			};
+			//var newClone = new Clone()
+			//{
+			//	LearningProgramm = ReturnStack(clone[cloneId].LearningProgramm),
+			//	RollbackedProgramm = ReturnStack(clone[cloneId].RollbackedProgramm)
+			//};
 			clone.Add(newClone);
 		}
 
