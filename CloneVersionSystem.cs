@@ -19,11 +19,12 @@ namespace Clones
 		public void Push(T value)
 		{
 			if (Head == null)
+            {
 				Head = Tail = new NewStackItem<T>() { Value = value, Previous = null };
+			}				
 			else
             {
-				var item = new NewStackItem<T>() { Value = value, Previous = Tail };
-				Tail = item;
+				Tail = new NewStackItem<T>() { Value = value, Previous = Tail }; ;			
             }
 			Count++;
 		}
@@ -34,7 +35,7 @@ namespace Clones
 			var result = Tail;
 			Tail = Tail.Previous;
 			if (Tail == null) Head = null;
-			Count = Count > 0 ? Count-- : 0;
+			if(Count > 0) Count--;
 			return result.Value;
 		}
 
@@ -46,21 +47,13 @@ namespace Clones
 
 		public void Clear()
         {
-			Head = Tail = new NewStackItem<T>() { Value = default(T), Previous = null };
+			Head = Tail = new NewStackItem<T>();
 			Count = 0;
 		}
 
 		public NewStack<T> Clone()
         {
-			var newStack = this;
-			var stack = new NewStack<T>();
-			while(newStack.Head != null)
-				stack.Push(newStack.Pop());
-			var head = stack.Head;
-			var tail = stack.Tail;
-			newStack.Head = tail;
-			newStack.Tail = head;
-			return newStack;
+			return new NewStack<T>() { Head = Head, Tail = Tail, Count = Count};
         }
 	}
 
